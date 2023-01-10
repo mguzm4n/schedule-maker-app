@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 export type Section = {
   id: string,
   day: string,
-  time: { from: Time, to: Time}
+  blockId: number
 }
 
 export type CourseFormState = {
@@ -21,7 +21,7 @@ export type CourseFormAction =
   | { type: 'getNewSection'}
   | { type: 'setNewSection', payload: Section };
 
-const defaultSection: Section = { id: uuidv4(), day: 'Lunes', time: { from: '8:15', to: '9:30' } };
+const defaultSection: Section = { id: uuidv4(), day: 'Lunes', blockId: 1 };
 
 export const initialState: CourseFormState = {
   error: undefined,
@@ -67,7 +67,7 @@ const courseFormReducer = (state: CourseFormState, action: CourseFormAction): Co
         }
         return section;
       })
-      
+
       return {
         ...state,
         sections: newSectionsList

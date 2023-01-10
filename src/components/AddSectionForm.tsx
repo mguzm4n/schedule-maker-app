@@ -1,6 +1,7 @@
 import { Dispatch, FC, useState, FormEvent, useEffect } from "react";
 import { CourseFormAction, Section } from "../hooks/courseFormReducer";
 import { days } from '../data';
+
 interface AddSectionFormProps {
   section: Section,
   index: number,
@@ -9,15 +10,14 @@ interface AddSectionFormProps {
 
 const AddSectionForm: FC<AddSectionFormProps> = ({ section, index, dispatch }) => {
   const [sectionState, setSectionState] = useState(section);
-  const onTimeChange = () => {
-    dispatch({ type: 'setNewSection', payload: {
-      ...sectionState,
 
-    } })
-  };
-
-  const onDayChange = (evt: FormEvent<HTMLSelectElement>) => {
-    const newSectionState = { ...sectionState, day: evt.currentTarget.value };
+  const onInputChange = (
+      evt: FormEvent<HTMLSelectElement | HTMLInputElement>, 
+      field: string
+    ) => {
+    const inputValue = evt.currentTarget.value;
+    const value = field === "blockId" ? parseInt(inputValue) : inputValue
+    const newSectionState = { ...sectionState, [field]: value };
     dispatch({ type: 'setNewSection', payload: newSectionState }); 
     setSectionState(newSectionState);
   };
@@ -25,7 +25,7 @@ const AddSectionForm: FC<AddSectionFormProps> = ({ section, index, dispatch }) =
   return (
     <div>
       <label  htmlFor={`section-${index}`}>Día</label>
-      <select name={`section-${index}`} id={`section-${index}`} onChange={onDayChange}>
+      <select name={`section-${index}`} id={`section-${index}`} onChange={evt => onInputChange(evt, 'day')}>
         {days.map(day => 
           <option value={day} defaultValue={sectionState.day}>
             { day }
@@ -33,11 +33,10 @@ const AddSectionForm: FC<AddSectionFormProps> = ({ section, index, dispatch }) =
         }
       </select>
 
-      <label  htmlFor="startTime" >Inicio</label>
-      <input id="startTime" name="from" defaultValue={sectionState.time.from} />
-
-      <label htmlFor="endTime">Término</label>
-      <input id="endTime" name="to" defaultValue={sectionState.time.to} />
+      <label  htmlFor={`blockId-${index}`} >Bloque horario</label>
+      <input onChange={evt => onInputChange(evt, 'blockId')} 
+        type="number" id={`blockId-${index}`}
+        name="blockId" defaultValue={sectionState.blockId} />
     </div>
   )
 };
