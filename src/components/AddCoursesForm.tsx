@@ -1,5 +1,7 @@
 import React, { useReducer } from 'react';
 import courseFormReducer, { initialState } from '../hooks/courseFormReducer';
+import { days } from '../data';
+import AddSectionForm from './AddSectionForm';
 
 const AddCoursesForm = () => {
   const [state, dispatch] = useReducer(courseFormReducer, initialState);
@@ -13,35 +15,46 @@ const AddCoursesForm = () => {
     })
   };
 
-  const onColorFieldChange = (evt: React.FormEvent<HTMLInputElement>, fromPicker: boolean = false) => {
+  const onColorFieldChange = (evt: React.FormEvent<HTMLInputElement>) => {
     dispatch({
       type: 'setColor',
       payload: {
-        color: evt.currentTarget.value,
-        fromPicker: fromPicker
+        color: evt.currentTarget.value
       }
     })
+  };
+
+  const getNewSection = () => {
+    dispatch({ type: 'getNewSection' })
   };
 
   return (
   <div>
     <form>
+      <p>Información del curso</p>
       <label htmlFor="courseName">Nombre del curso</label>
       <input id="courseName" name="name" type="text" onChange={onTxtFieldChange} />
       <label htmlFor="courseCode">Código o abreviación</label>
       <input id="courseCode" name="code" type="text" onChange={onTxtFieldChange} />
 
-      <label  htmlFor="startTime" >Inicio</label>
-      <input id="startTime" name="startTime" />
-      <label htmlFor="endTime">Término</label>
-      <input id="endTime" name="endTime" />
 
       <label htmlFor="selectedColor">Elegir un color</label>
-      <input type="color" id="courseColor" name="courseColor" onChange={(evt) => onColorFieldChange(evt, true)} />
+      <input type="color" id="courseColor" name="courseColor" onChange={(evt) => onColorFieldChange(evt)} />
       <input type="text" id="selectedColor" name="selectedColor" value={state.color} onChange={onColorFieldChange} />
+
+      <p>Horarios</p>
+
+      {state.sections.map((section, idx) => 
+        <AddSectionForm dispatch={dispatch} section={section} index={idx} />)
+      }
+
+      <button onClick={getNewSection} type="button" className="">
+        Agregar horario
+      </button>
     </form>
-    {state.error
-       && <p>
+
+    {state.error &&
+      <p>
         Error en campo { state.error.fieldError }
         { state.error.msg }
       </p>

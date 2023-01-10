@@ -1,23 +1,34 @@
 import { Time } from "../data";
+import { v4 as uuidv4 } from 'uuid';
+
+export type Section = {
+  id: string,
+  day: string,
+  time: { from: Time, to: Time}
+}
 
 export type CourseFormState = {
   error: { fieldError: string, msg: string } | undefined,
   name: string,
   code: string,
   color: string,
-  time: { from: Time, to: Time},
+  sections: Section[]
 };
 
-type CourseFormAction = 
+export type CourseFormAction = 
   | { type: 'setTxt', payload: { field: string, value: string } }
-  | { type: 'setColor', payload: { color: string }} ;
+  | { type: 'setColor', payload: { color: string } } 
+  | { type: 'getNewSection'}
+  | { type: 'setNewSection', payload: Section };
+
+const defaultSection: Section = { id: uuidv4(), day: 'Lunes', time: { from: '8:15', to: '9:30' } };
 
 export const initialState: CourseFormState = {
   error: undefined,
   name: '',
   code: '',
   color: '',
-  time: { from: '0:0', to: '0:0' },
+  sections: [defaultSection],
 };
 
 const courseFormReducer = (state: CourseFormState, action: CourseFormAction): CourseFormState => {
@@ -43,8 +54,28 @@ const courseFormReducer = (state: CourseFormState, action: CourseFormAction): Co
       }
 
       return response;
+    case "getNewSection":
+      return {
+        ...state,
+        sections: [...state.sections, { ...defaultSection, id: uuidv4() }]
+      };
+    case "setNewSection":
+      const newSection = action.payload;
+      const newSectionsList = state.sections.map(section => {
+        if (section.id === newSection.id) {
+          return newSection;
+        }
+        return section;
+      })
+      
+      return {
+        ...state,
+        sections: newSectionsList
+      }
+      
     default:
       return state;
+
   }
 };
 
