@@ -24,33 +24,43 @@ const AddCoursesForm = () => {
     })
   };
 
-  const getNewSection = () => {
-    dispatch({ type: 'getNewSection' })
-  };
-
   return (
   <div>
     <form>
-      <p>Información del curso</p>
-      <label htmlFor="courseName">Nombre del curso</label>
-      <input id="courseName" name="name" type="text" onChange={onTxtFieldChange} />
-      <label htmlFor="courseCode">Código o abreviación</label>
-      <input id="courseCode" name="code" type="text" onChange={onTxtFieldChange} />
+      <p className="border-b-2 p-2">Información del curso</p>
 
+      <div className="flex items-center gap-2 p-1">
+        <label className="pt-1 px-2 w-[30%]" htmlFor="courseName">
+          Nombre del curso
+        </label>
+        <input className="w-[60%] outline-none border-b-2 border-blue-500"
+          id="courseName" name="name" type="text" onChange={onTxtFieldChange} />
+      </div>
 
-      <label htmlFor="selectedColor">Elegir un color</label>
-      <input type="color" id="courseColor" name="courseColor" onChange={(evt) => onColorFieldChange(evt)} />
-      <input type="text" id="selectedColor" name="selectedColor" value={state.color} onChange={onColorFieldChange} />
+      <div className="flex items-center gap-2 p-1">
+        <label className="pt-1 px-2 w-[30%]" htmlFor="courseCode">
+          Código o abreviación
+        </label>
+        <input className="w-[60%] border-b-2 border-blue-500 outline-none"
+          id="courseCode" name="code" type="text" onChange={onTxtFieldChange} />
+      </div>
 
-      <p>Horarios</p>
+      <div className="flex items-center gap-2 p-1 mb-2">
+        <label className="pt-1 px-2 w-[30%]" htmlFor="selectedColor">Elegir un color</label>
+        <div className="flex w-[60%] justify-between">
+          <input type="color" id="courseColor" name="courseColor" onChange={(evt) => onColorFieldChange(evt)} />
+          <input className="border-b-2 border-blue-500 w-20 text-center"
+            type="text" id="selectedColor" name="selectedColor" value={state.color} onChange={onColorFieldChange} />
+        </div>
+      </div>
 
-      {state.sections.map((section, idx) => 
-        <AddSectionForm dispatch={dispatch} section={section} index={idx} />)
-      }
+      <p className="border-b-2 p-2">Horarios</p>
 
-      <button onClick={getNewSection} type="button" className="">
-        Agregar horario
-      </button>
+      {state.sections.map((section, idx: number) => (
+        <AddSectionForm dispatch={dispatch} section={section} index={idx} displayBtn={idx === state.sections.length - 1} />
+        )
+      )}
+
     </form>
 
     {state.error &&
