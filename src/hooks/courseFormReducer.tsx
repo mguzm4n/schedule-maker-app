@@ -19,7 +19,9 @@ export type CourseFormAction =
   | { type: 'setTxt', payload: { field: string, value: string } }
   | { type: 'setColor', payload: { color: string } } 
   | { type: 'getNewSection'}
-  | { type: 'setNewSection', payload: Section };
+  | { type: 'deleteNewSection', payload: { sectionId: string }}
+  | { type: 'setNewSection', payload: Section }
+  | { type: 'submitCourse' };
 
 const defaultSection: Section = { id: uuidv4(), day: 'Lunes', blockId: 1 };
 
@@ -46,7 +48,7 @@ const courseFormReducer = (state: CourseFormState, action: CourseFormAction): Co
         ...state,
         color: color
       };
-      const validColor = color.startsWith('#') && (color.length < 7 && color.length > 3);
+      const validColor = color.startsWith('#') && (color.length <= 7 && color.length > 3);
 
       response['error'] = validColor ? undefined : {
         fieldError: 'color',
@@ -59,6 +61,12 @@ const courseFormReducer = (state: CourseFormState, action: CourseFormAction): Co
         ...state,
         sections: [...state.sections, { ...defaultSection, id: uuidv4() }]
       };
+    case "deleteNewSection":
+      const id = action.payload.sectionId;
+      return {
+        ...state,
+        sections: state.sections.filter(section => section.id !== id)
+      }
     case "setNewSection":
       const newSection = action.payload;
       const newSectionsList = state.sections.map(section => {
@@ -72,7 +80,9 @@ const courseFormReducer = (state: CourseFormState, action: CourseFormAction): Co
         ...state,
         sections: newSectionsList
       }
+    case "submitCourse":
       
+      return state;
     default:
       return state;
 

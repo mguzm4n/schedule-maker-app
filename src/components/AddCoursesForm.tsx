@@ -1,4 +1,4 @@
-import React, { useReducer } from 'react';
+import React, { useReducer, FormEvent } from 'react';
 import courseFormReducer, { initialState } from '../hooks/courseFormReducer';
 import { days } from '../data';
 import AddSectionForm from './AddSectionForm';
@@ -24,9 +24,14 @@ const AddCoursesForm = () => {
     })
   };
 
+  const submitCourse = (evt: FormEvent<HTMLFormElement>) => {
+    evt.preventDefault();
+    dispatch({ type: 'submitCourse' });
+  };
+
   return (
   <div>
-    <form>
+    <form onSubmit={submitCourse}>
       <p className="border-b-2 p-2">Información del curso</p>
 
       <div className="flex items-center gap-2 p-1">
@@ -47,19 +52,44 @@ const AddCoursesForm = () => {
 
       <div className="flex items-center gap-2 p-1 mb-2">
         <label className="pt-1 px-2 w-[30%]" htmlFor="selectedColor">Elegir un color</label>
-        <div className="flex w-[60%] justify-between">
-          <input type="color" id="courseColor" name="courseColor" onChange={(evt) => onColorFieldChange(evt)} />
-          <input className="border-b-2 border-blue-500 w-20 text-center"
+        <div className="flex w-[60%] items-center justify-between">
+          <div className="flex gap-2">
+            <label htmlFor="courseColor">Rueda de colores:</label>
+            <input type="color" id="courseColor" name="courseColor" onChange={(evt) => onColorFieldChange(evt)} />
+          </div>
+          <div className="flex gap-2">
+            <p className="">Pegar:</p>
+            <input className="border-b-2 border-blue-500 w-20 text-center"
             type="text" id="selectedColor" name="selectedColor" value={state.color} onChange={onColorFieldChange} />
+          </div>
         </div>
       </div>
 
       <p className="border-b-2 p-2">Horarios</p>
 
       {state.sections.map((section, idx: number) => (
-        <AddSectionForm dispatch={dispatch} section={section} index={idx} displayBtn={idx === state.sections.length - 1} />
+        <AddSectionForm 
+          key={section.id} 
+          dispatch={dispatch} 
+          section={section} 
+          index={idx} 
+          totalSections={state.sections.length} 
+          />
         )
       )}
+
+      
+      <div className="flex flex-col items-center my-3">
+        <button
+          className="w-[40%] px-2.5 py-1 rounded-full bg-blue-500 text-white hover:opacity-75"
+          type="submit">
+          Guardar
+        <span className="text-red-700 text-xl">*</span> curso
+        </button>
+        <p className="px-5 py-2">
+          <span className="text-red-700 text-xl">*</span> Esto guardará el curso en la memoria local de su dispositivo, si usted borra el almacenamiento local, perderá los datos guardados.
+        </p>
+      </div>
 
     </form>
 

@@ -6,14 +6,18 @@ interface AddSectionFormProps {
   section: Section,
   index: number,
   dispatch: Dispatch<CourseFormAction>,
-  displayBtn: boolean
+  totalSections: number
 }
 
-const AddSectionForm: FC<AddSectionFormProps> = ({ section, index, dispatch, displayBtn }) => {
+const AddSectionForm: FC<AddSectionFormProps> = ({ section, index, dispatch, totalSections }) => {
   const [sectionState, setSectionState] = useState(section);
 
   const getNewSection = () => {
     dispatch({ type: 'getNewSection' })
+  };
+
+  const deleteNewSection = (id: string) => {
+    dispatch({ type: 'deleteNewSection', payload: { sectionId: id } })
   };
 
   const onInputChange = (
@@ -26,6 +30,9 @@ const AddSectionForm: FC<AddSectionFormProps> = ({ section, index, dispatch, dis
     dispatch({ type: 'setNewSection', payload: newSectionState }); 
     setSectionState(newSectionState);
   };
+
+  const displayGetNewSection = index === totalSections - 1;
+  const displayDeleteNewSection = totalSections > 1;
 
   return (
     <div className="flex items-center justify-between h-12 border-b px-2.5 py-1">
@@ -46,11 +53,17 @@ const AddSectionForm: FC<AddSectionFormProps> = ({ section, index, dispatch, dis
           name="blockId" defaultValue={sectionState.blockId} />
       </div>
       
-      {displayBtn && <button className="border-2 border-blue-500 rounded-full px-4 py-1 hover:bg-blue-500 hover:text-white"
+      {displayGetNewSection && 
+        <button className="border-2 border-blue-500 rounded-full px-4 py-1 hover:bg-blue-500 hover:text-white"
           onClick={getNewSection} type="button">
           Agregar sección
         </button>
       }
+      {displayDeleteNewSection &&
+        <button className="border-2 border-red-500 rounded-full px-4 py-1 hover:bg-red-500 hover:text-white"
+          onClick={() => deleteNewSection(section.id)} type="button">
+          Eliminar
+        </button>}
     </div>
   )
 };
