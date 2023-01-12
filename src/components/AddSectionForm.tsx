@@ -41,8 +41,8 @@ const AddSectionForm: FC<AddSectionFormProps> = ({ section, index, dispatch, tot
         <select 
           className="ml-2 border-b-2 border-blue-500"
           name={`section-${index}`} id={`section-${index}`} onChange={evt => onInputChange(evt, 'day')}>
-          {days.map(day =>
-            <option className="" value={day} defaultValue={sectionState.day}>
+          {days.map((day, idx) =>
+            <option key={idx} className="" value={day} defaultValue={sectionState.day}>
               { day }
             </option>)
           }

@@ -1,5 +1,6 @@
 import { Time } from "../data";
 import { v4 as uuidv4 } from 'uuid';
+import { postToCollection, postItem, getCollection } from '../localdb/localManagement';
 
 export type Section = {
   id: string,
@@ -7,8 +8,13 @@ export type Section = {
   blockId: number
 }
 
+type FormState = {
+  error: { fieldError?: string, msg?: string } | undefined, 
+  isLoading: boolean
+}
+
 export type CourseFormState = {
-  error: { fieldError: string, msg: string } | undefined,
+  formState: FormState,
   name: string,
   code: string,
   color: string,
@@ -21,23 +27,27 @@ export type CourseFormAction =
   | { type: 'getNewSection'}
   | { type: 'deleteNewSection', payload: { sectionId: string }}
   | { type: 'setNewSection', payload: Section }
-  | { type: 'submitCourse' };
+  | { type: 'submitCourse' }
+  | { type: 'loadingEvent' };
 
 const defaultSection: Section = { id: uuidv4(), day: 'Lunes', blockId: 1 };
 
 export const initialState: CourseFormState = {
-  error: undefined,
+  formState: { error: undefined, isLoading: false },
   name: '',
   code: '',
   color: '',
   sections: [defaultSection],
 };
 
+export type Course = Omit<CourseFormState, 'formState'> & {
+  id: string
+}
+
 const courseFormReducer = (state: CourseFormState, action: CourseFormAction): CourseFormState => {
   switch (action.type) {
     case "setTxt":
       const { field, value } = action.payload;
-      console.log(field, value);
       return {
         ...state,
         [field]: value,
@@ -50,7 +60,7 @@ const courseFormReducer = (state: CourseFormState, action: CourseFormAction): Co
       };
       const validColor = color.startsWith('#') && (color.length <= 7 && color.length > 3);
 
-      response['error'] = validColor ? undefined : {
+      response.formState.error = validColor ? undefined : {
         fieldError: 'color',
         msg: 'Formato del color ingresado inválido'
       }
@@ -81,8 +91,30 @@ const courseFormReducer = (state: CourseFormState, action: CourseFormAction): Co
         sections: newSectionsList
       }
     case "submitCourse":
-      
-      return state;
+      const postResponse = postToCollection<Course>('courses', {
+        id: uuidv4(),
+        code: state.code,
+        sections: state.sections,
+        color: state.color,
+        name: state.name
+      });
+
+      if (postResponse.state === 'OK') {
+        return {
+          ...state,
+          formState: { error: state.formState.error, isLoading: false }
+        }
+      }
+
+      return {
+        ...state,
+        formState: { error: { fieldError: '', msg: "Couldn't submit course" }, isLoading: false }
+      };
+    case "loadingEvent":
+      return {
+        ...state,
+        formState: { ...state.formState, isLoading: true }
+      }
     default:
       return state;
 

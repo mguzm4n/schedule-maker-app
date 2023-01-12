@@ -1,10 +1,13 @@
-import React, { useReducer, FormEvent } from 'react';
-import courseFormReducer, { initialState } from '../hooks/courseFormReducer';
-import { days } from '../data';
+import { FC, FormEvent, Dispatch } from 'react';
 import AddSectionForm from './AddSectionForm';
+import { postToCollection } from '../localdb/localManagement';
+import { CourseFormAction, CourseFormState, Section } from "../hooks/courseFormReducer";
 
-const AddCoursesForm = () => {
-  const [state, dispatch] = useReducer(courseFormReducer, initialState);
+interface Props {
+  state: CourseFormState,
+  dispatch: Dispatch<CourseFormAction>,
+}
+const AddCoursesForm: FC<Props> = ({ state, dispatch }) => {
   const onTxtFieldChange = (evt: React.FormEvent<HTMLInputElement>) => {
     dispatch({
       type: 'setTxt',
@@ -26,6 +29,7 @@ const AddCoursesForm = () => {
 
   const submitCourse = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
+    dispatch({ type: 'loadingEvent' });
     dispatch({ type: 'submitCourse' });
   };
 
@@ -81,7 +85,7 @@ const AddCoursesForm = () => {
       
       <div className="flex flex-col items-center my-3">
         <button
-          className="w-[40%] px-2.5 py-1 rounded-full bg-blue-500 text-white hover:opacity-75"
+          className="disabled:opacity-50 w-[40%] px-2.5 py-1 rounded-full bg-blue-500 text-white hover:opacity-75"
           type="submit">
           Guardar
         <span className="text-red-700 text-xl">*</span> curso
@@ -93,14 +97,20 @@ const AddCoursesForm = () => {
 
     </form>
 
-    {state.error &&
+    {state.formState.error &&
       <p>
-        Error en campo { state.error.fieldError }
-        { state.error.msg }
+        Error en campo { state.formState.error.fieldError }
+        { state.formState.error.msg }
       </p>
+    }
+
+    {
+      state.formState.isLoading &&
+      <div className="p-4 border-2 border-emerald-500">Enviando datos...</div>
     }
   </div>
   )
 };
 
 export default AddCoursesForm;
+
