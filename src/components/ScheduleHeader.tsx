@@ -41,7 +41,7 @@ const ScheduleHeader: FC<Props> = ({ tableBodyRef }) => {
             </th>
           }
           return <th style={ heights } className="line pt-6 pb-1 px-2 bg-white" key={day}>
-            <p className="uppercase text-center">{ day }</p>
+            <p className="uppercase tracking-tighter text-slate-700 text-center font-[MonserratSB]">{ day }</p>
           </th>
         })}  
       </tr>

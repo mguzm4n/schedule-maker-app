@@ -46,7 +46,7 @@ const Schedule: FC<Props> = ({ courses }) => {
                   <td className="text-center bg-white py-2">{ blockId }</td>
                   {days.map((day) => (
                     <td className="text-center bg-white py-2">
-                      {sections.find((section) => section.sectionDay === day)?.courseCode}
+                      <p className="font-[MonserratSB] text-slate-700 tracking-tighter">{sections.find((section) => section.sectionDay === day)?.courseCode}</p>
                     </td>
                   ))}
               </tr>)

@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  @font-face {
+    font-family: Monserrat;
+    src: url("./fonts/Montserrat-VariableFont_wght.ttf");
+  }
+  @font-face {
+    font-family: MonserratSB;
+    src: url("./fonts/Montserrat-SemiBold.ttf");
+  }
+}
+
 @layer components {
   .line {
     position: relative;
@@ -10,7 +21,7 @@
   /* Long line column */
   .line:not(.line:last-child)::after {
     content: '';
-    background-color: #d5d3c4;
+    background-color: theme(backgroundColor.slate.200);
     position: absolute;
     width: theme(width.2);
     height: calc(var(--headerLineHeight) + theme(width.2));
