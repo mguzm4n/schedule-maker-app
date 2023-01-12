@@ -11,7 +11,7 @@ type BlockTime = {
   endTime: Time,
 };
 
-export const dayTimes: BlockTime[] = [
+export const blockTimes: BlockTime[] = [
   { 
     blockId: 1,
     modules: [1, 2],
