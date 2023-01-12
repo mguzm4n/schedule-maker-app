@@ -26,9 +26,7 @@ export type CourseFormAction =
   | { type: 'setColor', payload: { color: string } } 
   | { type: 'getNewSection'}
   | { type: 'deleteNewSection', payload: { sectionId: string }}
-  | { type: 'setNewSection', payload: Section }
-  | { type: 'submitCourse' }
-  | { type: 'loadingEvent' };
+  | { type: 'setNewSection', payload: Section };
 
 const defaultSection: Section = { id: uuidv4(), day: 'Lunes', blockId: 1 };
 
@@ -89,31 +87,6 @@ const courseFormReducer = (state: CourseFormState, action: CourseFormAction): Co
       return {
         ...state,
         sections: newSectionsList
-      }
-    case "submitCourse":
-      const postResponse = postToCollection<Course>('courses', {
-        id: uuidv4(),
-        code: state.code,
-        sections: state.sections,
-        color: state.color,
-        name: state.name
-      });
-
-      if (postResponse.state === 'OK') {
-        return {
-          ...state,
-          formState: { error: state.formState.error, isLoading: false }
-        }
-      }
-
-      return {
-        ...state,
-        formState: { error: { fieldError: '', msg: "Couldn't submit course" }, isLoading: false }
-      };
-    case "loadingEvent":
-      return {
-        ...state,
-        formState: { ...state.formState, isLoading: true }
       }
     default:
       return state;

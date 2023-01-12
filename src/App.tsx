@@ -1,18 +1,24 @@
 import './index.css';
+import { getCollection } from './localdb/localManagement';
 
-import { useReducer } from 'react';
-import courseFormReducer, { initialState } from './hooks/courseFormReducer';
+import { useEffect, useState } from 'react';
+import { Course } from './hooks/courseFormReducer';
 
 import Schedule from './components/Schedule';
 import AddCoursesForm from './components/AddCoursesForm';
 
 function App() {
-  const [state, dispatch] = useReducer(courseFormReducer, initialState);
+  const [courses, setCourses] = useState<Course[]>([]);
 
+  useEffect(() => {
+    const coursesResponse = getCollection<Course>('courses');
+    setCourses(coursesResponse.data);
+  }, []);
+  
   return (
     <div className="App">
-      <AddCoursesForm state={state} dispatch={dispatch} />
-      <Schedule loadingNewCourse={state.formState.isLoading} />
+      <AddCoursesForm courses={courses} setCourses={setCourses} />
+      <Schedule courses={courses} />
     </div>
   )
 }

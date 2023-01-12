@@ -1,13 +1,18 @@
-import { FC, FormEvent, Dispatch } from 'react';
+import { FC, FormEvent, useReducer, Dispatch } from 'react';
 import AddSectionForm from './AddSectionForm';
 import { postToCollection } from '../localdb/localManagement';
-import { CourseFormAction, CourseFormState, Section } from "../hooks/courseFormReducer";
+
+import courseFormReducer,  { Course, initialState } from "../hooks/courseFormReducer";
+import { v4 as uuidv4 } from 'uuid';
 
 interface Props {
-  state: CourseFormState,
-  dispatch: Dispatch<CourseFormAction>,
+  courses: Course[]
+  setCourses: Dispatch<Course[]>
 }
-const AddCoursesForm: FC<Props> = ({ state, dispatch }) => {
+
+const AddCoursesForm: FC<Props> = ({ courses, setCourses }) => {
+  const [state, dispatch] = useReducer(courseFormReducer, initialState);
+
   const onTxtFieldChange = (evt: React.FormEvent<HTMLInputElement>) => {
     dispatch({
       type: 'setTxt',
@@ -29,8 +34,17 @@ const AddCoursesForm: FC<Props> = ({ state, dispatch }) => {
 
   const submitCourse = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
-    dispatch({ type: 'loadingEvent' });
-    dispatch({ type: 'submitCourse' });
+    const newCourse = {
+      id: uuidv4(),
+      code: state.code,
+      sections: state.sections,
+      color: state.color,
+      name: state.name
+    };
+    const postResponse = postToCollection<Course>('courses', newCourse);
+    if (postResponse.state == 'OK') {
+      setCourses([...courses, newCourse]);
+    }
   };
 
   return (

@@ -1,33 +1,15 @@
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 import { dayTimes, days } from "../data";
 import { Course } from "../hooks/courseFormReducer";
-import { getCollection } from "../localdb/localManagement";
-
 
 interface Props {
-  loadingNewCourse: boolean
+  courses: Course[]
 }
 
-const Schedule: FC<Props> = ({ loadingNewCourse }) => {
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    if (loadingNewCourse === true) {
-      return;
-    }
-
-    const coursesResponse = getCollection<Course>('courses');
-    setCourses(coursesResponse.data);
-    setIsLoading(false);
-  }, [loadingNewCourse]);
-
-  if (isLoading) {
-    return <div>Loading data...</div>
-  }
-  
+const Schedule: FC<Props> = ({ courses }) => {
   return(
     <div>
+      {courses.map(course => <div>{ course.name }</div>)}
       {days.map(day => {
         return <div key={day}>{ day }</div>
       })}
