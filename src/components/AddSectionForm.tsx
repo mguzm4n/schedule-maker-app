@@ -47,8 +47,8 @@ const AddSectionForm: FC<AddSectionFormProps> = ({ section, index, dispatch, tot
             </option>)
           }
         </select>
-        <label className="ml-4 border-b-2 border-blue-500" htmlFor={`blockId-${index}`} >Bloque horario:</label>
-        <input className="w-16 px-3" onChange={evt => onInputChange(evt, 'blockId')}
+        <label className="ml-4" htmlFor={`blockId-${index}`} >Bloque horario:</label>
+        <input className="w-16 px-3 ml-2 border-b-2 border-blue-500" onChange={evt => onInputChange(evt, 'blockId')}
           type="number" id={`blockId-${index}`}
           name="blockId" defaultValue={sectionState.blockId} />
       </div>

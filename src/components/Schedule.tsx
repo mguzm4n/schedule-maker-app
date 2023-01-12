@@ -1,6 +1,7 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import { blockTimes, days } from "../data";
 import { Course, Section } from "../hooks/courseFormReducer";
+import ScheduleHeader from "./ScheduleHeader";
 
 interface Props {
   courses: Course[]
@@ -13,8 +14,8 @@ type CourseSection = {
 }
 
 const Schedule: FC<Props> = ({ courses }) => {
-  const headerTags = ['Bloque', ...days];
   const [finalSchedule, setFinalSchedule] = useState<Array<[number, CourseSection[]]>>([]);
+  const tableBodyRef = useRef<HTMLTableSectionElement>(null);
 
   useEffect(() => {
     const scheduleByBlockId = new Map<number, CourseSection[]>();
@@ -31,26 +32,23 @@ const Schedule: FC<Props> = ({ courses }) => {
     const scheduleArr = Array.from(scheduleByBlockId);
     setFinalSchedule(scheduleArr);
   }, [courses]);
-  
 
   return(
     <div>
       {courses.map(course => <div>{ course.name }</div>)}
-      <table>
-        <thead>
-          <tr>
-            {headerTags.map(day => {
-              return <th key={day}>{ day }</th>
-            })}  
-          </tr>
-        </thead>
-        <tbody>
+      <table className="w-full table-fixed border-separate border-spacing-x-2 border-spacing-y-2">
+        <ScheduleHeader tableBodyRef={tableBodyRef} />
+        <tbody ref={tableBodyRef}>
           {
             finalSchedule.map(([ blockId, sections ]) => {
               return( 
               <tr>
-                  <td>{ blockId }</td>
-                  {days.map((day) => <td>{sections.find((section) => section.sectionDay === day)?.courseName}</td>)}
+                  <td className="text-center bg-white py-2">{ blockId }</td>
+                  {days.map((day) => (
+                    <td className="text-center bg-white py-2">
+                      {sections.find((section) => section.sectionDay === day)?.courseCode}
+                    </td>
+                  ))}
               </tr>)
             })
           }

@@ -2,6 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  .line {
+    position: relative;
+  }
+
+  /* Long line column */
+  .line:not(.line:last-child)::after {
+    content: '';
+    background-color: #d5d3c4;
+    position: absolute;
+    width: theme(width.2);
+    height: calc(var(--headerLineHeight) + theme(width.2));
+    top: 100%;
+    left: 100%;
+  }
+
+  /* Header line */
+  .line:not(.line:last-child)::before {
+    content: '';
+    background-color: white;
+    position: absolute;
+    width: theme(width.2);
+    height: var(--headerHeight);
+    top: 0;
+    left: 100%;
+  }
+
+}
+
 :root {
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
   font-size: 16px;
@@ -11,5 +40,5 @@
 
 
 body {
-  background-color: white;
+  background-color: rgb(243 244 246);
 }
