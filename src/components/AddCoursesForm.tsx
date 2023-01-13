@@ -10,9 +10,10 @@ import { CiWarning } from 'react-icons/ci';
 interface Props {
   courses: Course[]
   setCourses: Dispatch<Course[]>
+  display: boolean
 }
 
-const AddCoursesForm: FC<Props> = ({ courses, setCourses }) => {
+const AddCoursesForm: FC<Props> = ({ courses, setCourses, display }) => {
   const [state, dispatch] = useReducer(courseFormReducer, initialState);
 
   const onTxtFieldChange = (evt: React.FormEvent<HTMLInputElement>) => {
@@ -48,6 +49,10 @@ const AddCoursesForm: FC<Props> = ({ courses, setCourses }) => {
       setCourses([...courses, newCourse]);
     }
   };
+
+  if (!display) {
+    return <></>;
+  }
 
   return (<div>
     <form onSubmit={submitCourse}>
