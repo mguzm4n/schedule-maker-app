@@ -5,6 +5,8 @@ import { postToCollection } from '../localdb/localManagement';
 import courseFormReducer,  { Course, initialState } from "../hooks/courseFormReducer";
 import { v4 as uuidv4 } from 'uuid';
 
+import { CiWarning } from 'react-icons/ci';
+
 interface Props {
   courses: Course[]
   setCourses: Dispatch<Course[]>
@@ -47,10 +49,9 @@ const AddCoursesForm: FC<Props> = ({ courses, setCourses }) => {
     }
   };
 
-  return (
-  <div>
+  return (<div>
     <form onSubmit={submitCourse}>
-      <p className="border-b-2 p-2">Información del curso</p>
+      <p className="border-b-2 p-2 font-bold tracking-wide">Información del curso</p>
 
       <div className="flex items-center gap-2 p-1">
         <label className="pt-1 px-2 w-[30%]" htmlFor="courseName">
@@ -83,7 +84,7 @@ const AddCoursesForm: FC<Props> = ({ courses, setCourses }) => {
         </div>
       </div>
 
-      <p className="border-b-2 p-2">Horarios</p>
+      <p className="border-b-2 p-2 font-bold tracking-wide">Horarios</p>
 
       {state.sections.map((section, idx: number) => (
         <AddSectionForm 
@@ -99,13 +100,12 @@ const AddCoursesForm: FC<Props> = ({ courses, setCourses }) => {
       
       <div className="flex flex-col items-center my-3">
         <button
-          className="disabled:opacity-50 w-[40%] px-2.5 py-1 rounded-full bg-blue-500 text-white hover:opacity-75"
+          className="disabled:opacity-50 w-[40%] flex flex-row justify-center items-center gap-2 px-2.5 py-2 rounded-full bg-blue-500 text-white hover:opacity-75"
           type="submit">
-          Guardar
-        <span className="text-red-700 text-xl">*</span> curso
+          <CiWarning className="fill-amber-400 text-lg mb-0.5" /> Guardar curso
         </button>
-        <p className="px-5 py-2">
-          <span className="text-red-700 text-xl">*</span> Esto guardará el curso en la memoria local de su dispositivo, si usted borra el almacenamiento local, perderá los datos guardados.
+        <p className="px-5 py-2 flex items-start gap-2">
+          <CiWarning className="fill-amber-400 text-lg mt-0.5" /> Esto guardará el curso en la memoria local de su dispositivo, si usted borra el almacenamiento local, perderá los datos guardados.
         </p>
       </div>
 
@@ -122,8 +122,7 @@ const AddCoursesForm: FC<Props> = ({ courses, setCourses }) => {
       state.formState.isLoading &&
       <div className="p-4 border-2 border-emerald-500">Enviando datos...</div>
     }
-  </div>
-  )
+  </div>)
 };
 
 export default AddCoursesForm;
