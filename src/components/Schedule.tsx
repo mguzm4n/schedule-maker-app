@@ -47,8 +47,8 @@ const Schedule: FC<Props> = ({ courses }) => {
   }
 
   return(
-    <div>
-      {courses.map(course => <div>{ course.name }</div>)}
+    <div className="overflow-x-scroll">
+      {/* {courses.map(course => <div>{ course.name }</div>)} */}
       <table className="w-full table-fixed border-separate border-spacing-x-2 border-spacing-y-2">
         <ScheduleHeader tableBodyRef={tableBodyRef} />
         <tbody ref={tableBodyRef}>
@@ -56,10 +56,10 @@ const Schedule: FC<Props> = ({ courses }) => {
             finalSchedule.map(([ blockId, sections ]) => {
               return( 
               <tr>
-                  <td className="text-center bg-white py-2">{ blockId }</td>
+                  <td className="py-2 text-center bg-white ">{ blockId }</td>
                   {days.map((day) => (
-                    <td className="text-center bg-white py-2">
-                      <p className="font-[MonserratSB] text-slate-700 tracking-tighter">
+                    <td className="text-center bg-white py-2 w-32 px-2">
+                      <p className="font-[MonserratSB] text-slate-700 tracking-tighter text-center">
                         { calculateSectionsCollision(sections, day) }
                       </p>
                     </td>

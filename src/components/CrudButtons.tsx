@@ -8,7 +8,7 @@ interface Props {
 
 const CrudButtons: FC<Props> = ({ btns, setBtns }) => {
   const handleBtnSectionClick = (option: OptionBtnState) => {
-    const newBtns = [...btns]
+    const newBtns = [...btns];
     btns.forEach(btn => {
       if (btn.name === option.name) {
         btn.selected = !option.selected;

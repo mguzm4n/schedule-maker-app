@@ -37,11 +37,13 @@ const ScheduleHeader: FC<Props> = ({ tableBodyRef }) => {
       <tr className="">
         {headerTags.map((day, idx) => {
           if (idx == 0) {
-            return <th key={day} ref={headerHeightRef} className="w-10 bg-transparent">
+            return <th key={day} ref={headerHeightRef} className="w-5 px-4 bg-transparent">
             </th>
           }
-          return <th style={ heights } className="line pt-6 pb-1 px-2 bg-white" key={day}>
-            <p className="uppercase tracking-tighter text-slate-700 text-center font-[MonserratSB]">{ day }</p>
+          return <th style={ heights } className="line w-32 px-2 pt-6 pb-1 bg-white" key={day}>
+            <p className="uppercase tracking-tighter text-slate-700 text-center font-[MonserratSB] truncate">
+              { day }
+            </p>
           </th>
         })}  
       </tr>

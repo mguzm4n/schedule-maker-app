@@ -12,6 +12,7 @@ import { RiAddFill } from 'react-icons/ri';
 import { VscListSelection } from 'react-icons/vsc';
 import { IconType } from 'react-icons';
 import CrudButtons from './components/CrudButtons';
+import CourseList from './components/CourseList';
 
 export type CrudOptions = 'create' | 'read' | 'update';
 
@@ -37,7 +38,7 @@ function App() {
 
   const crudComponents: Record<CrudOptions, () => JSX.Element> = {
     "create": () => <AddCoursesForm display={true} courses={courses} setCourses={setCourses} />,
-    "read": () => <>Hi!</>,
+    "read": () => <CourseList courses={courses} />,
     "update": () => <>Update!</>
   }
 
@@ -56,7 +57,6 @@ function App() {
     <div className="w-full flex justify-center">
       <div className="pt-5 w-[75%]">
         <CrudButtons setBtns={setBtns} btns={btns} />
-        {/* <AddCoursesForm display={btns.find(s => s.id === "create")!.selected} courses={courses} setCourses={setCourses} /> */}
         <Schedule courses={courses} />
       </div>
     </div>
