@@ -115,18 +115,13 @@ const AddCoursesForm: FC<Props> = ({ courses, setCourses, display }) => {
       </div>
 
     </form>
-
+{/* 
     {state.formState.error &&
       <p>
         Error en campo { state.formState.error.fieldError }
         { state.formState.error.msg }
       </p>
-    }
-
-    {
-      state.formState.isLoading &&
-      <div className="p-4 border-2 border-emerald-500">Enviando datos...</div>
-    }
+    } */}
   </div>)
 };
 

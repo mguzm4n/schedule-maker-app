@@ -36,7 +36,7 @@ export const initialState: CourseFormState = {
   sections: [defaultSection],
 };
 
-export type Course = Omit<CourseFormState, 'formState'> & {
+export type Course = Omit<CourseFormState, 'errors'> & {
   id: string
 }
 
