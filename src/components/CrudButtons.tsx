@@ -21,7 +21,7 @@ const CrudButtons: FC<Props> = ({ btns, setBtns }) => {
 
   return (
     <div className="flex flex-col gap-2">
-      {btns.map((option) => (
+      {btns.map((option) => (<>
         <button onClick={() => handleBtnSectionClick(option)}
           key={option.name} className={`
             btn-section
@@ -29,7 +29,8 @@ const CrudButtons: FC<Props> = ({ btns, setBtns }) => {
           `}>
           {option.icon} { option.name }
         </button>
-      ))
+        { option.selected && option.crudComponent() }
+      </>))
       }
     </div>
   )

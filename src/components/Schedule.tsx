@@ -34,11 +34,7 @@ const Schedule: FC<Props> = ({ courses }) => {
   }, [courses]);
 
   const calculateSectionsCollision = (sections: CourseSection[], day: string): string => {
-    const sectionsOnSameBlock = sections.filter(section => {
-      if (section.sectionDay == day) {
-        return section;
-      }
-    });
+    const sectionsOnSameBlock = sections.filter(section => section.sectionDay == day);
     const totalSections = sectionsOnSameBlock.length;
     if (totalSections == 1) {
         const section = sectionsOnSameBlock[0];
