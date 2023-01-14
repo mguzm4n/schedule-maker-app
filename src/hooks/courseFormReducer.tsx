@@ -1,6 +1,7 @@
 import { Time } from "../data";
 import { v4 as uuidv4 } from 'uuid';
 import { postToCollection, postItem, getCollection } from '../localdb/localManagement';
+import { VscRunErrors } from "react-icons/vsc";
 
 export type Section = {
   id: string,
@@ -8,13 +9,10 @@ export type Section = {
   blockId: number
 }
 
-type FormState = {
-  error: { fieldError?: string, msg?: string } | undefined, 
-  isLoading: boolean
-}
+type ErrorState = { fieldError: string, msg: string }
 
 export type CourseFormState = {
-  formState: FormState,
+  errors: ErrorState[],
   name: string,
   code: string,
   color: string,
@@ -31,7 +29,7 @@ export type CourseFormAction =
 const defaultSection: Section = { id: uuidv4(), day: 'Lunes', blockId: 1 };
 
 export const initialState: CourseFormState = {
-  formState: { error: undefined, isLoading: false },
+  errors: [],
   name: '',
   code: '',
   color: '',
@@ -40,6 +38,15 @@ export const initialState: CourseFormState = {
 
 export type Course = Omit<CourseFormState, 'formState'> & {
   id: string
+}
+
+const isSectionRepeated = (sections: Section[], newSection: Section): boolean => {
+  for (let section of sections) {
+    if (section.day == newSection.day && section.blockId == newSection.blockId) {
+      return true;
+    }
+  }
+  return false;
 }
 
 const courseFormReducer = (state: CourseFormState, action: CourseFormAction): CourseFormState => {
@@ -58,11 +65,12 @@ const courseFormReducer = (state: CourseFormState, action: CourseFormAction): Co
       };
       const validColor = color.startsWith('#') && (color.length <= 7 && color.length > 3);
 
-      response.formState.error = validColor ? undefined : {
-        fieldError: 'color',
-        msg: 'Formato del color ingresado inválido'
+      if (!validColor) {
+        response.errors.push({
+          fieldError: 'color',
+          msg: 'Formato del color ingresado inválido'
+        })
       }
-
       return response;
     case "getNewSection":
       return {
@@ -77,6 +85,7 @@ const courseFormReducer = (state: CourseFormState, action: CourseFormAction): Co
       }
     case "setNewSection":
       const newSection = action.payload;
+      
       const newSectionsList = state.sections.map(section => {
         if (section.id === newSection.id) {
           return newSection;
@@ -84,10 +93,14 @@ const courseFormReducer = (state: CourseFormState, action: CourseFormAction): Co
         return section;
       })
 
-      return {
-        ...state,
-        sections: newSectionsList
+      const newState = { ...state, sections: newSectionsList };
+      if (isSectionRepeated(state.sections, newSection)) {
+        const error: ErrorState = { fieldError: 'sections', msg: 'Un mismo curso no puede tener tope en sus bloques' };
+        newState.errors = [...newState.errors, error];
       }
+
+      return newState;
+
     default:
       return state;
 
