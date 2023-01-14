@@ -1,11 +1,8 @@
-import { FC } from "react";
-import { Course } from "../hooks/courseFormReducer";
+import { useContext } from "react";
+import { CoursesContext } from "../App";
 
-interface Props {
-  courses: Course[]
-}
-
-const CourseList: FC<Props> = ({ courses }) => {
+const CourseList = () => {
+  const { courses } = useContext(CoursesContext);
   return (
     <div>
       { courses.map(course => (

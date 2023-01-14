@@ -1,7 +1,7 @@
 import './index.css';
 import { getCollection } from './localdb/localManagement';
 
-import { FC, ReactElement, useEffect, useState } from 'react';
+import { createContext, Dispatch, ReactElement, useEffect, useState } from 'react';
 import { Course } from './hooks/courseFormReducer';
 
 import Schedule from './components/Schedule';
@@ -33,12 +33,22 @@ const crudOptions: OptionBtn[] = [
   { id: "read", name: 'Mostrar cursos actuales', icon: <VscListSelection className="" /> },
 ];
 
+type CoursesState = {
+  courses: Course[],
+  setCourses: Dispatch<Course[]>
+}
+
+export const CoursesContext = createContext<CoursesState>({ 
+  courses: [], 
+  setCourses: () => {} 
+});
+
 function App() {
   const [courses, setCourses] = useState<Course[]>([]);
 
   const crudComponents: Record<CrudOptions, () => JSX.Element> = {
-    "create": () => <AddCoursesForm display={true} courses={courses} setCourses={setCourses} />,
-    "read": () => <CourseList courses={courses} />,
+    "create": () => <AddCoursesForm />,
+    "read": () => <CourseList />,
     "update": () => <>Update!</>
   }
 
@@ -56,8 +66,10 @@ function App() {
   return (
     <div className="w-full flex justify-center">
       <div className="pt-5 w-[75%]">
-        <CrudButtons setBtns={setBtns} btns={btns} />
-        <Schedule courses={courses} />
+        <CoursesContext.Provider value={{ courses, setCourses }}>
+          <CrudButtons setBtns={setBtns} btns={btns} />
+          <Schedule courses={courses} />
+        </CoursesContext.Provider>
       </div>
     </div>
   )

@@ -1,4 +1,4 @@
-import { FC, FormEvent, useReducer, Dispatch } from 'react';
+import { FC, FormEvent, useReducer, Dispatch, useContext } from 'react';
 import AddSectionForm from './AddSectionForm';
 import { postToCollection } from '../localdb/localManagement';
 
@@ -7,14 +7,12 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { CiWarning } from 'react-icons/ci';
 
-interface Props {
-  courses: Course[]
-  setCourses: Dispatch<Course[]>
-  display: boolean
-}
+import { CoursesContext } from '../App';
 
-const AddCoursesForm: FC<Props> = ({ courses, setCourses, display }) => {
+
+const AddCoursesForm = () => {
   const [state, dispatch] = useReducer(courseFormReducer, initialState);
+  const { courses, setCourses } = useContext(CoursesContext);
 
   const onTxtFieldChange = (evt: React.FormEvent<HTMLInputElement>) => {
     dispatch({
@@ -49,10 +47,6 @@ const AddCoursesForm: FC<Props> = ({ courses, setCourses, display }) => {
       setCourses([...courses, newCourse]);
     }
   };
-
-  if (!display) {
-    return <></>;
-  }
 
   return (<div>
     <form onSubmit={submitCourse}>
