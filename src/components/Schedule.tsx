@@ -33,6 +33,23 @@ const Schedule: FC<Props> = ({ courses }) => {
     setFinalSchedule(scheduleArr);
   }, [courses]);
 
+  const calculateSectionsCollision = (sections: CourseSection[], day: string): string => {
+    const sectionsOnSameBlock = sections.filter(section => {
+      if (section.sectionDay == day) {
+        return section;
+      }
+    });
+    const totalSections = sectionsOnSameBlock.length;
+    if (totalSections == 1) {
+        const section = sectionsOnSameBlock[0];
+        return section.courseCode;
+    }
+    if (totalSections > 1) {
+      return "* TOPE *"
+    }
+    return "";
+  }
+
   return(
     <div>
       {courses.map(course => <div>{ course.name }</div>)}
@@ -46,7 +63,9 @@ const Schedule: FC<Props> = ({ courses }) => {
                   <td className="text-center bg-white py-2">{ blockId }</td>
                   {days.map((day) => (
                     <td className="text-center bg-white py-2">
-                      <p className="font-[MonserratSB] text-slate-700 tracking-tighter">{sections.find((section) => section.sectionDay === day)?.courseCode}</p>
+                      <p className="font-[MonserratSB] text-slate-700 tracking-tighter">
+                        { calculateSectionsCollision(sections, day) }
+                      </p>
                     </td>
                   ))}
               </tr>)
