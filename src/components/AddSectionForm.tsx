@@ -1,6 +1,6 @@
 import { Dispatch, FC, useState, FormEvent, useEffect } from "react";
 import { CourseFormAction, Section } from "../hooks/courseFormReducer";
-import { days } from '../data';
+import { blockTimes, days } from '../data';
 
 interface AddSectionFormProps {
   section: Section,
@@ -31,7 +31,7 @@ const AddSectionForm: FC<AddSectionFormProps> = ({ section, index, dispatch, tot
     setSectionState(newSectionState);
   };
 
-  const displayGetNewSection = index === totalSections - 1;
+  const displayGetNewSection = (index === totalSections - 1) && (index < blockTimes.length);
   const displayDeleteNewSection = totalSections > 1;
 
   return (
@@ -53,17 +53,23 @@ const AddSectionForm: FC<AddSectionFormProps> = ({ section, index, dispatch, tot
           name="blockId" defaultValue={sectionState.blockId} />
       </div>
       
-      {displayGetNewSection && 
-        <button className="border-2 border-blue-500 rounded-full px-4 py-1 hover:bg-blue-500 hover:text-white"
+      <div className="flex gap-4">
+        <button className="
+          border-2 border-red-500 rounded-full px-4 py-1 
+          hover:bg-red-500 hover:text-white
+          disabled:opacity-50 disabled:hover:text-black disabled:hover:bg-transparent"
+          disabled={!displayDeleteNewSection}
+          onClick={() => deleteNewSection(section.id)} type="button">
+          Eliminar
+        </button>
+        <button className="border-2 border-blue-500 rounded-full px-4 py-1 
+          hover:bg-blue-500 hover:text-white
+          disabled:opacity-50 disabled:hover:text-black disabled:hover:bg-transparent"
+          disabled={!displayGetNewSection}
           onClick={getNewSection} type="button">
           Agregar sección
         </button>
-      }
-      {displayDeleteNewSection &&
-        <button className="border-2 border-red-500 rounded-full px-4 py-1 hover:bg-red-500 hover:text-white"
-          onClick={() => deleteNewSection(section.id)} type="button">
-          Eliminar
-        </button>}
+      </div>
     </div>
   )
 };

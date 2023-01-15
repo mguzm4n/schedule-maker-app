@@ -37,6 +37,12 @@ const AddCoursesForm = () => {
 
   const submitCourse = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
+
+    if (state.errors.size > 0) {
+      window.alert("Aún quedan errores por corregir!");
+      return;
+    }
+
     const newCourse = {
       id: uuidv4(),
       code: state.code,

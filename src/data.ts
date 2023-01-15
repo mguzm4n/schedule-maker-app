@@ -69,6 +69,6 @@ export const blockTimes: BlockTime[] = [
 ];
 
 export const colors: string[] = [
-  '#F786AA', '#11B5E4', '#399E5A', '##8B635C', '#A2A3BB',
+  '#F786AA', '#11B5E4', '#399E5A', '#8B635C', '#A2A3BB',
   '##7D8CC4', '#FC7753', '#DBD56E', '#CA2E55', '#61E8E1',
  ];
