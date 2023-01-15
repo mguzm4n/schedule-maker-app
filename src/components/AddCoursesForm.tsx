@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { CiWarning } from 'react-icons/ci';
 
 import { CoursesContext } from '../App';
+import { validateCourses } from '../localdb/validateCoursesField';
 
 
 const AddCoursesForm = () => {
@@ -28,7 +29,8 @@ const AddCoursesForm = () => {
     dispatch({
       type: 'setColor',
       payload: {
-        color: evt.currentTarget.value
+        color: evt.currentTarget.value,
+        courses: courses
       }
     })
   };
@@ -42,6 +44,8 @@ const AddCoursesForm = () => {
       color: state.color,
       name: state.name
     };
+
+    // const finalCourse = generateColor(courses, newCourse);
     const postResponse = postToCollection<Course>('courses', newCourse);
     if (postResponse.state == 'OK') {
       setCourses([...courses, newCourse]);
@@ -109,13 +113,11 @@ const AddCoursesForm = () => {
       </div>
 
     </form>
-{/* 
-    {state.formState.error &&
-      <p>
-        Error en campo { state.formState.error.fieldError }
-        { state.formState.error.msg }
-      </p>
-    } */}
+    {[...state.errors].map((err) => (
+      <div className="border-b-2 border-b-red-600">
+        <p>{ err }</p>
+      </div>
+    ))}
   </div>)
 };
 

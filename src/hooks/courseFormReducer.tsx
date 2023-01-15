@@ -1,7 +1,7 @@
-import { Time } from "../data";
+import { blockTimes, Time } from "../data";
 import { v4 as uuidv4 } from 'uuid';
-import { postToCollection, postItem, getCollection } from '../localdb/localManagement';
-import { VscRunErrors } from "react-icons/vsc";
+import { checkUsedColor } from "../localdb/validateCoursesField";
+import { beforeAll } from "@jest/globals";
 
 export type Section = {
   id: string,
@@ -9,10 +9,8 @@ export type Section = {
   blockId: number
 }
 
-type ErrorState = { fieldError: string, msg: string }
-
 export type CourseFormState = {
-  errors: ErrorState[],
+  errors: Set<string>,
   name: string,
   code: string,
   color: string,
@@ -21,7 +19,7 @@ export type CourseFormState = {
 
 export type CourseFormAction = 
   | { type: 'setTxt', payload: { field: string, value: string } }
-  | { type: 'setColor', payload: { color: string } } 
+  | { type: 'setColor', payload: { color: string, courses: Course[] } } 
   | { type: 'getNewSection'}
   | { type: 'deleteNewSection', payload: { sectionId: string }}
   | { type: 'setNewSection', payload: Section };
@@ -29,7 +27,7 @@ export type CourseFormAction =
 const defaultSection: Section = { id: uuidv4(), day: 'Lunes', blockId: 1 };
 
 export const initialState: CourseFormState = {
-  errors: [],
+  errors: new Set(),
   name: '',
   code: '',
   color: '',
@@ -42,11 +40,22 @@ export type Course = Omit<CourseFormState, 'errors'> & {
 
 const isSectionRepeated = (sections: Section[], newSection: Section): boolean => {
   for (let section of sections) {
-    if (section.day == newSection.day && section.blockId == newSection.blockId) {
+    if (
+        section.id !== newSection.id &&
+        (section.day == newSection.day && section.blockId == newSection.blockId)
+      ) {
       return true;
     }
   }
   return false;
+}
+
+const checkError = (condition: boolean, set: Set<string>, msg: string) => {
+  if (condition) {
+    set.add(msg);
+  } else {
+    set.delete(msg);
+  }
 }
 
 const courseFormReducer = (state: CourseFormState, action: CourseFormAction): CourseFormState => {
@@ -58,30 +67,43 @@ const courseFormReducer = (state: CourseFormState, action: CourseFormAction): Co
         [field]: value,
       }
     case "setColor":
-      const { color }  = action.payload;
+      const { color, courses }  = action.payload;
       const response = {
         ...state,
         color: color
       };
       const validColor = color.startsWith('#') && (color.length <= 7 && color.length > 3);
+      checkError(!validColor, response.errors, 'Formato del color ingresado inválido');
+      
+      const usedColor = checkUsedColor(courses, color);
+      checkError(usedColor, response.errors, 'Color ya utilizado por otro curso');
 
-      if (!validColor) {
-        response.errors.push({
-          fieldError: 'color',
-          msg: 'Formato del color ingresado inválido'
-        })
-      }
       return response;
     case "getNewSection":
       return {
         ...state,
-        sections: [...state.sections, { ...defaultSection, id: uuidv4() }]
+        errors: (new Set(state.errors)).add('Un mismo curso no puede tener tope en sus bloques'),
+        sections: [...state.sections, { 
+          ...defaultSection, 
+          id: uuidv4() 
+        }]
       };
     case "deleteNewSection":
       const id = action.payload.sectionId;
+      const errors = new Set(state.errors);
+      const filteredSections = state.sections.filter(section => section.id !== id);
+      filteredSections.forEach(section => {
+        checkError(
+          isSectionRepeated(filteredSections, section), 
+          errors, 
+          'Un mismo curso no puede tener tope en sus bloques'
+        );
+      });
+
       return {
         ...state,
-        sections: state.sections.filter(section => section.id !== id)
+        errors: errors,
+        sections: filteredSections
       }
     case "setNewSection":
       const newSection = action.payload;
@@ -91,13 +113,14 @@ const courseFormReducer = (state: CourseFormState, action: CourseFormAction): Co
           return newSection;
         }
         return section;
-      })
+      });
 
       const newState = { ...state, sections: newSectionsList };
-      if (isSectionRepeated(state.sections, newSection)) {
-        const error: ErrorState = { fieldError: 'sections', msg: 'Un mismo curso no puede tener tope en sus bloques' };
-        newState.errors = [...newState.errors, error];
-      }
+      checkError(
+        isSectionRepeated(state.sections, newSection), 
+        newState.errors, 
+        'Un mismo curso no puede tener tope en sus bloques'
+      );
 
       return newState;
 
