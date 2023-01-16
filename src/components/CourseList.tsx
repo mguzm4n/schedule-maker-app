@@ -28,8 +28,8 @@ const CourseList = () => {
       {courses.map(course => (
         <div className="bg-gray-200 rounded-md px-2 py-3">
           <p className="border-b-4 border-b-slate-300 rounded-sm pb-4 mb-3">
-            <span className="inline-flex items-center mr-2 w-min 
-            bg-slate-400 rounded-lg text-slate-900 font-bold text-sm px-2">
+            <span style={{ backgroundColor: course.color }} className="inline-flex items-center mr-2 w-min 
+            rounded-lg text-slate-900 font-bold text-sm px-2">
               { course.code }
             </span>
             { course.name }

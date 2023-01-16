@@ -1,16 +1,18 @@
 import { FC, useEffect, useRef, useState } from "react";
 import { blockTimes, days } from "../data";
-import { Course, Section } from "../hooks/courseFormReducer";
+import { Course } from "../hooks/courseFormReducer";
+import ScheduleCourseCell from "./ScheduleCell";
 import ScheduleHeader from "./ScheduleHeader";
 
 interface Props {
   courses: Course[]
 }
 
-type CourseSection = {
+export type CourseSection = {
   courseCode: string,
   courseName: string,
-  sectionDay: string
+  sectionDay: string,
+  color: string,
 }
 
 const Schedule: FC<Props> = ({ courses }) => {
@@ -23,6 +25,7 @@ const Schedule: FC<Props> = ({ courses }) => {
     for(let course of courses) {
       course.sections.forEach((section) => {
         scheduleByBlockId.get(section.blockId)?.push({
+          color: course.color,
           courseName: course.name,
           courseCode: course.code,
           sectionDay: section.day
@@ -32,19 +35,6 @@ const Schedule: FC<Props> = ({ courses }) => {
     const scheduleArr = Array.from(scheduleByBlockId);
     setFinalSchedule(scheduleArr);
   }, [courses]);
-
-  const calculateSectionsCollision = (sections: CourseSection[], day: string): string => {
-    const sectionsOnSameBlock = sections.filter(section => section.sectionDay == day);
-    const totalSections = sectionsOnSameBlock.length;
-    if (totalSections == 1) {
-        const section = sectionsOnSameBlock[0];
-        return section.courseCode;
-    }
-    if (totalSections > 1) {
-      return "* TOPE *"
-    }
-    return "";
-  }
 
   return(
     <div className="overflow-x-scroll">
@@ -58,11 +48,7 @@ const Schedule: FC<Props> = ({ courses }) => {
               <tr>
                   <td className="py-2 text-center bg-white ">{ blockId }</td>
                   {days.map((day) => (
-                    <td className="text-center bg-white py-2 w-32 px-2">
-                      <p className="font-[MonserratSB] text-slate-700 tracking-tighter text-center">
-                        { calculateSectionsCollision(sections, day) }
-                      </p>
-                    </td>
+                    <ScheduleCourseCell day={day} sections={sections} />
                   ))}
               </tr>)
             })
