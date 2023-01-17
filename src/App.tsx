@@ -13,6 +13,8 @@ import { VscListSelection } from 'react-icons/vsc';
 import { IconType } from 'react-icons';
 import CrudButtons from './components/CrudButtons';
 import CourseList from './components/CourseList';
+import useCourses from './hooks/useCourses';
+import CoursesProvider from './hooks/coursesContext';
 
 export type CrudOptions = 'create' | 'read' | 'update';
 
@@ -33,18 +35,9 @@ const crudOptions: OptionBtn[] = [
   { id: "read", name: 'Mostrar cursos actuales', icon: <VscListSelection className="" /> },
 ];
 
-type CoursesState = {
-  courses: Course[],
-  setCourses: Dispatch<Course[]>
-}
-
-export const CoursesContext = createContext<CoursesState>({ 
-  courses: [], 
-  setCourses: () => {} 
-});
 
 function App() {
-  const [courses, setCourses] = useState<Course[]>([]);
+  const { setCourses } = useCourses();
 
   const crudComponents: Record<CrudOptions, () => JSX.Element> = {
     "create": () => <AddCoursesForm />,
@@ -66,10 +59,8 @@ function App() {
   return (
     <div className="w-full flex justify-center">
       <div className="pt-5 w-[75%]">
-        <CoursesContext.Provider value={{ courses, setCourses }}>
-          <CrudButtons setBtns={setBtns} btns={btns} />
-          <Schedule courses={courses} />
-        </CoursesContext.Provider>
+        <CrudButtons setBtns={setBtns} btns={btns} />
+        <Schedule />
       </div>
     </div>
   )

@@ -1,6 +1,7 @@
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, useContext, useEffect, useRef, useState } from "react";
 import { blockTimes, days } from "../data";
 import { Course } from "../hooks/courseFormReducer";
+import useCourses from "../hooks/useCourses";
 import ScheduleCourseCell from "./ScheduleCell";
 import ScheduleHeader from "./ScheduleHeader";
 
@@ -15,7 +16,8 @@ export type CourseSection = {
   color: string,
 }
 
-const Schedule: FC<Props> = ({ courses }) => {
+const Schedule = () => {
+  const { courses } = useCourses();
   const [finalSchedule, setFinalSchedule] = useState<Array<[number, CourseSection[]]>>([]);
   const tableBodyRef = useRef<HTMLTableSectionElement>(null);
 
@@ -38,17 +40,18 @@ const Schedule: FC<Props> = ({ courses }) => {
 
   return(
     <div className="overflow-x-scroll">
-      {/* {courses.map(course => <div>{ course.name }</div>)} */}
       <table className="w-full table-fixed border-separate border-spacing-x-2 border-spacing-y-2">
         <ScheduleHeader tableBodyRef={tableBodyRef} />
         <tbody ref={tableBodyRef}>
           {
-            finalSchedule.map(([ blockId, sections ]) => {
+            finalSchedule.map(([ blockId, sections ], idx) => {
               return( 
-              <tr>
+              <tr key={blockId}>
                   <td className="py-2 text-center bg-white ">{ blockId }</td>
                   {days.map((day) => (
-                    <ScheduleCourseCell day={day} sections={sections} />
+                    <ScheduleCourseCell key={`${blockId}-${day}-${idx}`} 
+                      blockId={blockId} day={day} sections={sections} 
+                    />
                   ))}
               </tr>)
             })

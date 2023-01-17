@@ -3,6 +3,7 @@ import { Section } from "../hooks/courseFormReducer";
 import { CourseSection } from "./Schedule";
 
 interface Props {
+  blockId: number,
   day: string,
   sections: CourseSection[]
 }
@@ -11,29 +12,27 @@ const initialState= {
   courseCode: '', color: '', courseName: '', sectionDay: ''
 }
 
-const ScheduleCourseCell: FC<Props> = ({ day, sections }) => {
-  const [section, setSection] = useState<CourseSection>(initialState);
+const ScheduleCourseCell: FC<Props> = ({ blockId, day, sections }) => {
 
-  const calculateSectionsCollision = (day: string): void => {
+  const section = calculateSectionsCollision(day);
+
+  function calculateSectionsCollision(day: string): CourseSection {
     const sectionsOnSameBlock = sections.filter(section => section.sectionDay == day);
     const totalSections = sectionsOnSameBlock.length;
     if (totalSections == 1) {
-        const section = sectionsOnSameBlock[0];
-        setSection(section);
+      const newSection = sectionsOnSameBlock[0];
+      return newSection;
     }
     if (totalSections > 1) {
-      setSection({
+      return {
         courseCode: '* TOPE *',
         courseName: '* TOPE *',
         sectionDay: '-',
         color: 'white'
-      })
+      }
     }
+    return initialState;
   }
-
-  useEffect(() => {
-    calculateSectionsCollision(day);
-  }, []);
 
   if (sections.length == 0) {
     return <td className="bg-white"></td>

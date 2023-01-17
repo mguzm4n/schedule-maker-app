@@ -1,10 +1,11 @@
 import { useContext } from "react";
-import { CoursesContext } from "../App";
 import { Section } from "../hooks/courseFormReducer";
 import { blockTimes } from "../data";
+import useCourses from "../hooks/useCourses";
 
 const CourseList = () => {
-  const { courses } = useContext(CoursesContext);
+  const { courses } = useCourses();
+  
   const formatSection = (sections: Section[]) => {
     const formatter = new Intl.ListFormat('en', { style: 'long', type: 'conjunction' });
     const codedSection = sections
@@ -26,7 +27,7 @@ const CourseList = () => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-2">
       {courses.map(course => (
-        <div className="bg-gray-200 rounded-md px-2 py-3">
+        <div key={course.id} className="bg-gray-200 rounded-md px-2 py-3 mt-2">
           <p className="border-b-4 border-b-slate-300 rounded-sm pb-4 mb-3">
             <span style={{ backgroundColor: course.color }} className="inline-flex items-center mr-2 w-min 
             rounded-lg text-slate-900 font-bold text-sm px-2">

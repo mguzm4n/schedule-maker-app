@@ -21,16 +21,16 @@ const CrudButtons: FC<Props> = ({ btns, setBtns }) => {
 
   return (
     <div className="flex flex-col gap-2">
-      {btns.map((option) => (<>
-        <button onClick={() => handleBtnSectionClick(option)}
-          key={option.name} className={`
+      {btns.map((option) => (<div key={option.id} >
+        <button  onClick={() => handleBtnSectionClick(option)}
+          className={`
             btn-section
             ${option.selected ? 'underline underline-offset-4 bg-blue-600 border-b-blue-500 hover:border-b-blue-600' : ''}
           `}>
           {option.icon} { option.name }
         </button>
         { option.selected && option.crudComponent() }
-      </>))
+      </div>))
       }
     </div>
   )

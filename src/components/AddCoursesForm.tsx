@@ -7,13 +7,13 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { CiWarning } from 'react-icons/ci';
 
-import { CoursesContext } from '../App';
 import { validateCourses } from '../localdb/validateCoursesField';
+import useCourses from '../hooks/useCourses';
 
 
 const AddCoursesForm = () => {
   const [state, dispatch] = useReducer(courseFormReducer, initialState);
-  const { courses, setCourses } = useContext(CoursesContext);
+  const { courses, setCourses } = useCourses();
 
   const onTxtFieldChange = (evt: React.FormEvent<HTMLInputElement>) => {
     dispatch({
