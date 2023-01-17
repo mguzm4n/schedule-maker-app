@@ -8,6 +8,38 @@ type GetMsg<T> = PostMsg & {
   data: T[]
 }
 
+
+export const updateToCollection = <T extends { id: number }>(collectionName: string, object: T): PostMsg => {
+  const tryFetch = localStorage.getItem(collectionName);
+  if (tryFetch == null) {
+    return {
+      state: 'FAILED',
+      msg: "Couldn't find collection"
+    }
+  }
+  const collection = JSON.parse(tryFetch) as T[];
+  const retrvdObject = collection.find(item => item.id == object.id);
+  if (retrvdObject == undefined) {
+    return {
+      state: 'FAILED',
+      msg: "Couldn't find item"
+    }
+  }
+
+  localStorage.setItem(collectionName, JSON.stringify(collection.map(item => {
+      if (item.id == object.id) {
+        return { ...item, ...object };
+      }
+      return item;
+    })
+  ));
+
+  return {
+    state: 'OK',
+    msg: "Updated correctly"
+  };
+};
+
 export const postToCollection = <T>(collectionName: string, object: T): PostMsg => {
   // Gets collection named collectionName as array of T objects.
   const fetchFirstTry = localStorage.getItem(collectionName);

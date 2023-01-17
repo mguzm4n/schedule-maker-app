@@ -1,7 +1,7 @@
 import './index.css';
 import { getCollection } from './localdb/localManagement';
 
-import { createContext, Dispatch, ReactElement, useEffect, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import { Course } from './hooks/courseFormReducer';
 
 import Schedule from './components/Schedule';
@@ -11,10 +11,11 @@ import { AiOutlineEdit } from "react-icons/ai";
 import { RiAddFill } from 'react-icons/ri';
 import { VscListSelection } from 'react-icons/vsc';
 import { IconType } from 'react-icons';
+
 import CrudButtons from './components/CrudButtons';
 import CourseList from './components/CourseList';
 import useCourses from './hooks/useCourses';
-import CoursesProvider from './hooks/coursesContext';
+import UpdateCourse from './components/UpdateCourse';
 
 export type CrudOptions = 'create' | 'read' | 'update';
 
@@ -42,7 +43,7 @@ function App() {
   const crudComponents: Record<CrudOptions, () => JSX.Element> = {
     "create": () => <AddCoursesForm />,
     "read": () => <CourseList />,
-    "update": () => <>Update!</>
+    "update": () => <UpdateCourse />
   }
 
   const [btns, setBtns] = useState(
